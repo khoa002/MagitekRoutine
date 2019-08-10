@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Magitek.Views.UserControls.DarkKnight
+namespace Magitek.Controls
 {
     /// <summary>
-    /// Interaction logic for DarkArts.xaml
+    /// Interaction logic for BossFightLog.xaml
     /// </summary>
-    public partial class DarkArts : UserControl
+    public partial class BossFightLog : UserControl
     {
-        public DarkArts()
+        public BossFightLog()
         {
             InitializeComponent();
         }

@@ -43,31 +43,6 @@ namespace Magitek
         public void Initialize()
         {
             Logger.WriteInfo("Initializing ...");
-
-            var patternFinder = new GreyMagic.PatternFinder(Core.Memory);
-            var intPtr = patternFinder.Find("Search 48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? EB AB Add 3 TraceRelative");
-            var languageByte = Core.Memory.Read<byte>(intPtr);
-
-            switch (languageByte)
-            {
-                case 1:
-                    Globals.Language = GameVersion.English;
-                    break;
-                case 2:
-                    Globals.Language = GameVersion.English;
-                    break;
-                case 3:
-                    Globals.Language = GameVersion.English;
-                    break;
-                case 4:
-                    Globals.Language = GameVersion.Chinese;
-                    break;
-                default:
-                    Globals.Language = GameVersion.English;
-                    break;
-            }
-
-            Logger.WriteInfo($"Current Language: {Globals.Language}");
             RotationManager.Reset();
             ViewModels.BaseSettings.Instance.RoutineSelectedInUi = RotationManager.CurrentRotation.ToString();
             DispelManager.Reset();
@@ -94,11 +69,6 @@ namespace Magitek
 
         private void OnStart(BotBase bot)
         {
-            if (BaseSettings.Instance.UseOverlay)
-            {
-                StartMainOverlay();
-            }
-
             Logic.OpenerLogic.InOpener = false;
             Logic.OpenerLogic.OpenerQueue.Clear();
             Logic.SpellQueueLogic.SpellQueue.Clear();
@@ -106,6 +76,7 @@ namespace Magitek
             // Apply the gambits we have
             GambitsViewModel.Instance.ApplyGambits();
             OpenersViewModel.Instance.ApplyOpeners();
+            StartMainOverlay();
         }
 
         private void OnStop(BotBase bot)
@@ -160,11 +131,11 @@ namespace Magitek
             Combat.AdjustCombatTime();
             Combat.AdjustDutyTime();
 
-            Debug.Instance.InCombatTime = Combat.CombatTime.Elapsed.Seconds;
-            Debug.Instance.OutOfCombatTime = Combat.OutOfCombatTime.Elapsed.Seconds;
-            Debug.Instance.InCombatMovingTime = Combat.MovingInCombatTime.Elapsed.Seconds;
-            Debug.Instance.NotMovingInCombatTime = Combat.NotMovingInCombatTime.Elapsed.Seconds;
-            Debug.Instance.DutyTime = Combat.DutyTime.Elapsed.Seconds;
+            Debug.Instance.InCombatTime = (long)Combat.CombatTime.Elapsed.TotalSeconds;
+            Debug.Instance.OutOfCombatTime = (int)Combat.OutOfCombatTime.Elapsed.TotalSeconds;
+            Debug.Instance.InCombatMovingTime = (int)Combat.MovingInCombatTime.Elapsed.TotalSeconds;
+            Debug.Instance.NotMovingInCombatTime = (int)Combat.NotMovingInCombatTime.Elapsed.TotalSeconds;
+            Debug.Instance.DutyTime = (long)Combat.DutyTime.Elapsed.TotalSeconds;
             Debug.Instance.DutyState = Duty.State();
             Debug.Instance.CastingGambit = Casting.CastingGambit;
 
@@ -239,6 +210,8 @@ namespace Magitek
                 return;
 
             Form.Show();
+
+            StartMainOverlay();
         }
 
         private static SettingsWindow _form;
@@ -257,7 +230,7 @@ namespace Magitek
             }
         }
         
-        private void StartMainOverlay()
+        private static void StartMainOverlay()
         {
             if (!BaseSettings.Instance.UseOverlay)
                 return;
@@ -265,7 +238,7 @@ namespace Magitek
             OverlayManager.StartMainOverlay();
         }
 
-        private void StopMainOverlay()
+        private static void StopMainOverlay()
         {
             OverlayManager.StopMainOverlay();
         }

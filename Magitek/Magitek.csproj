@@ -38,14 +38,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GreyMagic">
+    <Reference Include="GreyMagic, Version=1.0.41.0, Culture=neutral, PublicKeyToken=260525fa2b0e778a, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\GreyMagic.dll</HintPath>
     </Reference>
     <Reference Include="PropertyChanged, Version=2.1.4.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>packages\PropertyChanged.Fody.2.1.4\lib\netstandard1.0\PropertyChanged.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="RebornBuddy">
+    <Reference Include="RebornBuddy, Version=1.0.292.0, Culture=neutral, PublicKeyToken=48d7174f8a943034, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\RebornBuddy.exe</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -64,6 +66,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BossFightLog\BossFight.cs" />
+    <Compile Include="BossFightLog\BossFightLogItem.cs" />
     <Compile Include="Commands\AwaitableDelegateCommand.cs" />
     <Compile Include="Commands\AwaitableDelegateCommandT.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
@@ -71,6 +75,9 @@
     <Compile Include="Commands\IAsyncCommand.cs" />
     <Compile Include="Commands\IAsyncCommandT.cs" />
     <Compile Include="Commands\IRaiseCanExecuteChanged.cs" />
+    <Compile Include="Controls\BossFightLog.xaml.cs">
+      <DependentUpon>BossFightLog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CurrentNews.xaml.cs">
       <DependentUpon>CurrentNews.xaml</DependentUpon>
     </Compile>
@@ -151,6 +158,7 @@
     <Compile Include="Extensions\SpellDataExtensions.cs" />
     <Compile Include="Extensions\XivDbItemExtensions.cs" />
     <Compile Include="Gambits\Actions\BaseCastSpellAction.cs" />
+    <Compile Include="Gambits\Actions\CastFillerOnCurrentTargetAction.cs" />
     <Compile Include="Gambits\Actions\CastSpellOnAllyAction.cs" />
     <Compile Include="Gambits\Actions\CastSpellOnCurrentTargetAction.cs" />
     <Compile Include="Gambits\Actions\CastSpellOnEnemyAction.cs" />
@@ -182,6 +190,7 @@
     <Compile Include="Gambits\Conditions\MonkGreasedLightningCondition.cs" />
     <Compile Include="Gambits\Conditions\NinjaHutonCondition.cs" />
     <Compile Include="Gambits\Conditions\NinjaNinkiCondition.cs" />
+    <Compile Include="Gambits\Conditions\NotInInstanceCondition.cs" />
     <Compile Include="Gambits\Conditions\PlayerDoesNotHaveAuraCondition.cs" />
     <Compile Include="Gambits\Conditions\PlayerHasAuraBelowCondition.cs" />
     <Compile Include="Gambits\Conditions\PlayerHasAuraCondition.cs" />
@@ -202,13 +211,12 @@
     <Compile Include="Gambits\Gambit.cs" />
     <Compile Include="Gambits\GambitGroup.cs" />
     <Compile Include="Gambits\SharedOpener.cs" />
-    <Compile Include="Logic\Astrologian\Card.cs" />
     <Compile Include="Logic\Bard\Aoe.cs" />
-    <Compile Include="Logic\Bard\Buff.cs" />
-    <Compile Include="Logic\Bard\Dispel.cs" />
-    <Compile Include="Logic\Bard\Dot.cs" />
+    <Compile Include="Logic\Bard\Cooldowns.cs" />
+    <Compile Include="Logic\Bard\DamageOverTime.cs" />
     <Compile Include="Logic\Bard\SingleTarget.cs" />
     <Compile Include="Logic\Bard\Songs.cs" />
+    <Compile Include="Logic\Bard\Utility.cs" />
     <Compile Include="Logic\BlackMage\Aoe.cs" />
     <Compile Include="Logic\BlackMage\Buff.cs" />
     <Compile Include="Logic\BlackMage\SingleTarget.cs" />
@@ -496,6 +504,7 @@
     <Compile Include="Utilities\OverlayManager.cs" />
     <Compile Include="Utilities\Routines\Dancer.cs" />
     <Compile Include="Utilities\Routines\Gunbreaker.cs" />
+    <Compile Include="Utilities\Weaving.cs" />
     <Compile Include="Utilities\ZoomHack.cs" />
     <Compile Include="Utilities\Duty.cs" />
     <Compile Include="Utilities\Globals.cs" />
@@ -527,6 +536,7 @@
     <Compile Include="Utilities\XivDataHelper.cs" />
     <Compile Include="ViewModels\AstrologianCardRules.cs" />
     <Compile Include="ViewModels\BaseSettings.cs" />
+    <Compile Include="ViewModels\BossFightViewModel.cs" />
     <Compile Include="ViewModels\Debug.cs" />
     <Compile Include="ViewModels\Dispelling.cs" />
     <Compile Include="ViewModels\GambitsBrowser.cs" />
@@ -553,9 +563,6 @@
     <Compile Include="Views\UserControls\Astrologian\Buffs.xaml.cs">
       <DependentUpon>Buffs.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserControls\Astrologian\CardRules.xaml.cs">
-      <DependentUpon>CardRules.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\UserControls\Astrologian\Pvp.xaml.cs">
       <DependentUpon>Pvp.xaml</DependentUpon>
     </Compile>
@@ -580,14 +587,20 @@
     <Compile Include="Views\UserControls\Bard\Aoe.xaml.cs">
       <DependentUpon>Aoe.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserControls\Bard\Buffs.xaml.cs">
-      <DependentUpon>Buffs.xaml</DependentUpon>
+    <Compile Include="Views\UserControls\Bard\Cooldowns.xaml.cs">
+      <DependentUpon>Cooldowns.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Bard\DamageOverTime.xaml.cs">
+      <DependentUpon>DamageOverTime.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\Bard\SingleTarget.xaml.cs">
       <DependentUpon>SingleTarget.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\Bard\Songs.xaml.cs">
       <DependentUpon>Songs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Bard\Utilities.xaml.cs">
+      <DependentUpon>Utilities.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\BlackMage\Aoe.xaml.cs">
       <DependentUpon>Aoe.xaml</DependentUpon>
@@ -647,9 +660,6 @@
     </Compile>
     <Compile Include="Views\UserControls\DarkKnight\Combat.xaml.cs">
       <DependentUpon>Combat.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\UserControls\DarkKnight\DarkArts.xaml.cs">
-      <DependentUpon>DarkArts.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\DarkKnight\Defensives.xaml.cs">
       <DependentUpon>Defensives.xaml</DependentUpon>
@@ -842,6 +852,10 @@
     <EmbeddedResource Include="Resources\BossDictionary.json" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\BossFightLog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\CurrentNews.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -975,10 +989,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\UserControls\Astrologian\CardRules.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\UserControls\Astrologian\Pvp.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1011,15 +1021,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\UserControls\Bard\Buffs.xaml">
+    <Page Include="Views\UserControls\Bard\Cooldowns.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\UserControls\Bard\SingleTarget.xaml">
+    <Page Include="Views\UserControls\Bard\DamageOverTime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\Bard\Songs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\Bard\Utilities.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\Bard\SingleTarget.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1098,10 +1116,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\DarkKnight\Combat.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UserControls\DarkKnight\DarkArts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

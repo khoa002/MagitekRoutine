@@ -24,6 +24,10 @@ namespace Magitek.Rotations.Summoner
             if (!Core.Me.HasTarget || !Core.Me.CurrentTarget.ThoroughCanAttack())
                 return false;
 
+            //Logger.Write("Aetherflow Count: " + MagitekActionResourceManager.Arcanist.Aetherflow);
+            //Logger.Write("Can Trance: " + MagitekActionResourceManager.Arcanist.CanTrance);
+            //Logger.Write("In Trance: " + MagitekActionResourceManager.Arcanist.CanTrance);
+
             if (await CustomOpenerLogic.Opener()) return true;
 
             if (!SpellQueueLogic.SpellQueue.Any()) SpellQueueLogic.InSpellQueue = false;
@@ -46,6 +50,7 @@ namespace Magitek.Rotations.Summoner
                 if (await Pets.SummonBahamut()) return true;
                 if (await SingleTarget.Deathflare()) return true;
                 if (await SingleTarget.TriDisaster()) return true;
+                if (await Pets.Summon()) return true;
                 if (await Buff.LucidDreaming()) return true;
                 if (await SingleTarget.Enkindle()) return true;
                 if (await SingleTarget.EgiAssault2()) return true;

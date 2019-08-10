@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ff14bot;
 using ff14bot.Managers;
 using Magitek.Extensions;
@@ -50,6 +49,9 @@ namespace Magitek.Logic.Summoner
         {
             if (!SummonerSettings.Instance.Bio) return false;
 
+            if (Spells.TriDisaster.Cooldown.TotalMilliseconds <= SummonerSettings.Instance.DotRefreshSeconds * 1000)
+                return false;
+
             return !Core.Me.CurrentTarget.HasAnyAura(Utilities.Routines.Summoner.BioAuras, true, SummonerSettings.Instance.DotRefreshSeconds * 1000)
                    && await Spells.SmnBio.Cast(Core.Me.CurrentTarget);
         }
@@ -60,6 +62,9 @@ namespace Magitek.Logic.Summoner
 
             if (MovementManager.IsMoving) return false;
             var refresh = SummonerSettings.Instance.DotRefreshSeconds * 1000;
+
+            if (Spells.TriDisaster.Cooldown.TotalMilliseconds <= refresh)
+                return false;
 
             switch (Core.Me.ClassLevel)
             {
@@ -138,7 +143,7 @@ namespace Magitek.Logic.Summoner
 
             if (!SummonerSettings.Instance.TriDisaster) return false;
 
-            if (!ActionResourceManager.Summoner.DreadwyrmTrance && Spells.DreadwyrmTrance.Cooldown.TotalMilliseconds > 0)
+            if (!ActionResourceManager.Summoner.DreadwyrmTrance && Spells.Trance.Cooldown.TotalMilliseconds > 0)
             {
                 if (Core.Me.CurrentTarget.HasAnyAura(Utilities.Routines.Summoner.BioAuras, true, 3000)) return false;
                 if (Core.Me.CurrentTarget.HasAnyAura(Utilities.Routines.Summoner.MiasmaAuras, true, 3000)) return false;
@@ -161,7 +166,7 @@ namespace Magitek.Logic.Summoner
 
             if (ActionResourceManager.Summoner.Timer.TotalMilliseconds > 1000) return false;
 
-            return await Spells.DeathFlare.Cast(Core.Me.CurrentTarget);
+            return await Spells.Deathflare.Cast(Core.Me.CurrentTarget);
         }
 
         public static async Task<bool> EnkindleBahamut()
@@ -173,6 +178,8 @@ namespace Magitek.Logic.Summoner
             if ((int)PetManager.ActivePetType == 10 && !SummonerSettings.Instance.EnkindleBahamut) return false;
 
             if ((int)PetManager.ActivePetType == 14 && !SummonerSettings.Instance.EnkindlePhoenix) return false;
+
+            if (ActionResourceManager.Summoner.Timer.TotalMilliseconds > 18000) return false;
 
             return await Spells.EnkindleBahamut.Cast(Core.Me.CurrentTarget);
         }

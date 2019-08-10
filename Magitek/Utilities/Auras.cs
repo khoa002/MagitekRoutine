@@ -6,6 +6,7 @@ namespace Magitek.Utilities
     {
         public const int
             Raise = 148,
+            BattleVoice = 141,
             Swiftcast = 167,
             Aero = 143,
             Aero2 = 144,
@@ -25,6 +26,7 @@ namespace Magitek.Utilities
             Galvanize = 297,
             Combust = 838,
             Combust2 = 843,
+            Combust3 = 1881,
             EnhancedBenefic2 = 815,
             AspectedBenefic = 835,
             AspectedHelios = 836,
@@ -54,7 +56,7 @@ namespace Magitek.Utilities
             Windbite = 129,
             Foresight = 83,
             HallowedGround = 82,
-            ShieldOath = 79,
+            IronWill = 79,
             Rampart = 1191,
             Sentinel = 74,
             GoringBlade = 725,
@@ -67,7 +69,6 @@ namespace Magitek.Utilities
             Darkside = 751,
             Reprisal = 753,
             LivingDead = 810,
-            EnhancedUnleash = 814,
             DragonKick = 98,
             TwinSnakes = 101,
             FistsofFire = 103,
@@ -172,7 +173,12 @@ namespace Magitek.Utilities
             ReadytoRip = 1842,
             ReadytoTear = 1843,
             ReadytoGouge = 1844,
-            RoyalGuard = 1833;
+            Reassembled = 851,
+            NascentChaos = 1897,
+            RoyalGuard = 1833,
+            DarkMissionary = 1894,
+            Delirium = 1972,
+            Anatman = 1862;
 
         private const int
             Invincibility0 = 981,

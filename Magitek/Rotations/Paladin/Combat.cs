@@ -6,7 +6,9 @@ using Magitek.Extensions;
 using Magitek.Logic;
 using Magitek.Logic.Paladin;
 using Magitek.Logic.Roles;
+using Magitek.Models.Account;
 using Magitek.Models.Paladin;
+using Magitek.Models.QueueSpell;
 using Magitek.Utilities;
 using Auras = Magitek.Utilities.Auras;
 
@@ -14,6 +16,7 @@ namespace Magitek.Rotations.Paladin
 {
     internal static class Combat
     {
+
         public static async Task<bool> Execute()
         {
             if (await Defensive.TankBusters()) return true;
@@ -26,9 +29,8 @@ namespace Magitek.Rotations.Paladin
             if (!Core.Me.HasTarget || !Core.Me.CurrentTarget.ThoroughCanAttack())
                 return false;
 
-
             if (await CustomOpenerLogic.Opener()) return true;
-      
+
             if (await Buff.Oath()) return true;
 
 
@@ -42,9 +44,12 @@ namespace Magitek.Rotations.Paladin
                 if (await SingleTarget.Requiescat()) return true;
                 if (await Buff.FightOrFlight()) return true;
                 if (await SingleTarget.Interject()) return true;
-                if (await SingleTarget.SpiritsWithin()) return true;
-                if (await Aoe.CircleofScorn()) return true;
-                if (await SingleTarget.Intervene()) return true;
+                if (!Utilities.Routines.Paladin.OGCDHold)
+                {
+                    if (await SingleTarget.SpiritsWithin()) return true;
+                    if (await Aoe.CircleofScorn()) return true;
+                                   if (await SingleTarget.Intervene()) return true;
+                }
                 if (await Buff.Sheltron()) return true;
             }
 
@@ -59,18 +64,13 @@ namespace Magitek.Rotations.Paladin
 
             if (ActionManager.LastSpell == Spells.RiotBlade && Core.Me.ClassLevel > 25 && Core.Me.ClassLevel  <60)
             {
-                var rageTarget = Utilities.Combat.Enemies.FirstOrDefault(r => r.TargetGameObject != Core.Me && ActionManager.CanCast(Spells.RageofHalone, r));
-
-                if (rageTarget == null || Group.CastableAlliesWithin30.Any(r => r.IsTank()))
-                    return await Spells.RageofHalone.Cast(Core.Me.CurrentTarget);
-
-                return await Spells.RageofHalone.Cast(rageTarget);
+                return await Spells.RageofHalone.Cast(Core.Me.CurrentTarget);
             }
 
             #region Last Spell RiotBlade
             if (ActionManager.LastSpell == Spells.RiotBlade)
             {
-                if (Core.Me.ClassLevel > 54 && !Core.Me.CurrentTarget.HasAura(Auras.GoringBlade, true, (PaladinSettings.Instance.RefreshGoringBlade) * 1000) && Core.Me.CurrentTarget.HealthCheck(PaladinSettings.Instance.HealthSetting, PaladinSettings.Instance.HealthSettingPercent))
+                if (Core.Me.ClassLevel >= 54 && !Core.Me.CurrentTarget.HasAura(Auras.GoringBlade, true, (PaladinSettings.Instance.RefreshGoringBlade) * 1000) && Core.Me.CurrentTarget.HealthCheck(PaladinSettings.Instance.HealthSetting, PaladinSettings.Instance.HealthSettingPercent))
                 {
                     if (await Spells.GoringBlade.Cast(Core.Me.CurrentTarget)) return true;
                 }
@@ -100,12 +100,12 @@ namespace Magitek.Rotations.Paladin
                 //    }
                 //}
 
-                if (!Core.Me.CurrentTarget.HasAura(Auras.GoringBlade, true, PaladinSettings.Instance.RefreshGoringBlade * 1000))
-                {
-                    return await Spells.RiotBlade.Cast(Core.Me.CurrentTarget);
-                }
+                //if (!Core.Me.CurrentTarget.HasAura(Auras.GoringBlade, true, PaladinSettings.Instance.RefreshGoringBlade * 1000))
+                //{
+                //    return await Spells.RiotBlade.Cast(Core.Me.CurrentTarget);
+                //}
 
-                if (Core.Me.ClassLevel >= 60)
+                if (Core.Me.ClassLevel >= 4)
                 {
                     return await Spells.RiotBlade.Cast(Core.Me.CurrentTarget);
                 }
@@ -120,7 +120,6 @@ namespace Magitek.Rotations.Paladin
             {
                 return await Spells.ShieldLob.Cast(Core.Me.CurrentTarget);
             }
-
             if (PaladinSettings.Instance.HolySpiritWhenOutOfMeleeRange && Core.Me.ClassLevel >= 64 && await Spells.HolySpirit.Cast(Core.Me.CurrentTarget)) return true;
             return await SingleTarget.ShieldLob();
         }

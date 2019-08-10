@@ -26,6 +26,36 @@ namespace Magitek.Logic.Monk
 
             return await Spells.Rockbreaker.Cast(Core.Me.CurrentTarget);
         }
+
+        public static async Task<bool> FourPointStrike()
+        {
+            if (!MonkSettings.Instance.UseAoe)
+                return false;
+
+            if (Combat.Enemies.Count(r => r.InView()) < MonkSettings.Instance.RockbreakerEnemies)
+                return false;
+
+            if (!Core.Me.HasAura(Auras.RaptorForm) && !Core.Me.HasAura(Auras.PerfectBalance))
+                return false;
+
+            if (!Core.Me.HasAura(Auras.TwinSnakes, true, MonkSettings.Instance.TwinSnakesRefresh * 1000))
+                return await Spells.TwinSnakes.Cast(Core.Me.CurrentTarget);
+
+            return await Spells.FourPointFury.Cast(Core.Me);
+        }
+
+        public static async Task<bool> ArmOfDestroyer()
+        {
+            if (!MonkSettings.Instance.UseAoe)
+                return false;
+
+            if (Combat.Enemies.Count(r => r.InView()) < MonkSettings.Instance.RockbreakerEnemies)
+                return false;
+
+            return await Spells.ArmOfTheDestroyer.Cast(Core.Me);
+        }
+
+
         public static async Task<bool> ElixerField()
         {
             // Off GCD
@@ -34,6 +64,9 @@ namespace Magitek.Logic.Monk
                 return false;
 
             if (!MonkSettings.Instance.UseElixerField)
+                return false;
+
+            if (Spells.ElixirField.Cooldown.Seconds != 0)
                 return false;
 
             if (Core.Me.EnemiesNearby(5).Count() < MonkSettings.Instance.ElixerFieldEnemies)
